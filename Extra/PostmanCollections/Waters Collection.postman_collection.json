@@ -1,0 +1,297 @@
+{
+	"info": {
+		"_postman_id": "9c9cb1b1-5f15-4237-aa99-89cc1de6d5e7",
+		"name": "Waters Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "LoginRequest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"alex\",\r\n  \"password\": \"123321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:44350/user/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUsers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:44350/user",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUsersById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:44350/user/2",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"user",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUsersByUsername",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:44350/user/alex",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"user",
+								"alex"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"mihai\",\r\n  \"password\": \"123321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:44350/user",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateUser",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "PostTicket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Piesa teatru\",\r\n  \"description\": \"Descriere piesa teatru\",\r\n  \"price\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:44350/user/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllTickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:44350/tickets/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"tickets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTicketsById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:44350/tickets/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"tickets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put_UpdateTicketsById",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"description\": \"Edited description\",\r\n  \"title\": \"Piesa teatru\",\r\n  \"price\": 333\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:44350/tickets",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTickets",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:44350/tickets/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44350",
+							"path": [
+								"tickets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWxleCIsInJvbGUiOiJtYW5hZ2VyIiwibmJmIjoxNjQxNTU0NDc4LCJleHAiOjE2NDE1NjE2NzgsImlhdCI6MTY0MTU1NDQ3OH0.WvjcQN9hdjrE2gKY66jrc7Q0RFAeM30dVFg_U6sWyks",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"value": "",
+			"type": "string"
+		}
+	]
+}
