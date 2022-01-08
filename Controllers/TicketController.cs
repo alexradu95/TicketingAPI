@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using WatersTicketingAPI.Data;
 using WatersTicketingAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace WatersTicketingAPI.Controllers
 {
@@ -60,6 +61,7 @@ namespace WatersTicketingAPI.Controllers
             
             try
             {
+                model.UserId = int.Parse(User.Claims.First(i => i.Type == "UserId").Value);
                 context.Tickets.Add(model);
                 await context.SaveChangesAsync();
                 return Ok(model);

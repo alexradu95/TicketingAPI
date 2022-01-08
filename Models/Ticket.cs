@@ -20,5 +20,9 @@ namespace WatersTicketingAPI.Models
         [Required(ErrorMessage = "The Ticket Price is required")]
         [Range(1, int.MaxValue, ErrorMessage = "The Ticket price must be greater than zero")]
         public decimal Price { get; set; }
+
+        public int UserId { get; set; }
+        public User CreatedBy { get; set; }
+
     }
 }
