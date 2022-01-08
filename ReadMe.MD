@@ -2,11 +2,20 @@
 
 - Everyone can see the tickets -> Done
 
-- Only authenticated users can sale or purchase tickets -> De facut controller pentru purchase si pentru sell ( sell e create )
+- Only authenticated users can sale or purchase tickets ->
 
-- Only the ticket owner can modify the ticket (e.g. change price)
+  * de facut entry-point pentru sell si buy
+  * facut trei roluri, unul de admin, unul de seller si unul de buyer
+  * securizat datele folosind un DTO pentru a ascunde informatiile neesentiale
+
+- Only the ticket owner can modify the ticket (e.g. change price) -> Done
+
+  * implementan sistem de autentificare cu JWT Token
+  * pus in claim numele si rolul utilizatorului
+  * pus restrictii pe entry-point-ul de PUT
 
 2) Please implement only the endpoint for updating a ticket described by your design using ASP.NET WebAPI, preferably in C#.
+
 
 Expectations:
 

@@ -9,23 +9,30 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Security.Claims;
 using WatersTicketingAPI.Utils;
+using AutoMapper;
+using WatersTicketingAPI.DTO;
 
 namespace WatersTicketingAPI.Controllers
 {
     [Route("tickets")]
     public class TicketController : ControllerBase
     {
+        private readonly IMapper _mapper;
+
+        public TicketController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         [HttpGet]
         [Route("")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Ticket>>> Get([FromServices] DataContext context)
+        public async Task<ActionResult<List<TicketDTO>>> Get([FromServices] DataContext dbContext)
         {
             try
             {
-                var products = await context.Tickets.ToListAsync();
-                if(products == null || products.Count == 0 )
-                    return NotFound(new { message = "Tickets not found."});
-                return Ok(products);
+                var tickets = await dbContext.Tickets.ToListAsync();
+                return (tickets == null || tickets.Count == 0) ? NotFound(new { message = "Tickets not found." }) : Ok(_mapper.Map<List<TicketDTO>>(tickets));
             }
             catch (Exception ex)
             {
@@ -36,14 +43,12 @@ namespace WatersTicketingAPI.Controllers
         [HttpGet]
         [Route("{id:int}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Ticket>> GetById([FromRoute] int id, [FromServices] DataContext context)
+        public async Task<ActionResult<TicketDTO>> GetById([FromRoute] int id, [FromServices] DataContext dbContext)
         {
             try
             {
-                var product = await context.Tickets.FirstOrDefaultAsync(x => x.Id == id);
-                if(product == null)
-                    return NotFound(new { message = "Tickets not found." });
-                return Ok(product);
+                var tickets = await dbContext.Tickets.FirstOrDefaultAsync(x => x.Id == id);
+                return (tickets == null) ? NotFound(new { message = "Tickets not found." }) : Ok(_mapper.Map<TicketDTO>(tickets));
             }
             catch (Exception ex)
             {
@@ -51,10 +56,36 @@ namespace WatersTicketingAPI.Controllers
             }   
         }
 
+
+        [HttpGet]
+        [Route("myTickets")]
+        [Authorize(Roles = "admin, seller")]
+        public async Task<ActionResult<Ticket>> GetMyTickets([FromServices] DataContext dbContext)
+        {
+            try
+            {
+                var username = this.ExtractUsernameFromClaim();
+
+                if(String.IsNullOrEmpty(username))
+                {
+                    return BadRequest(new { message = $"Invalid Session. Please authenticate" });
+                }
+
+                List<Ticket> tickets = await dbContext.Tickets.Where(x => x.CreatedBy.Username == username).ToListAsync();
+
+                return (tickets == null ? NotFound(new { message = "Tickets not found." }) : Ok(tickets));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Could not get tickets. Error: {ex.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("")]
         [Authorize(Roles = "admin, seller")]
-        public async Task<ActionResult<Ticket>> Post([FromBody]Ticket model, [FromServices]DataContext context)
+        public async Task<ActionResult<TicketDTO>> Post([FromBody]Ticket model, [FromServices]DataContext dbContext)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -64,12 +95,12 @@ namespace WatersTicketingAPI.Controllers
 
                 var username = this.ExtractUsernameFromClaim();
 
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
 
                 model.UserId = user.Id;
 
-                context.Tickets.Add(model);
-                await context.SaveChangesAsync();
+                dbContext.Tickets.Add(model);
+                await dbContext.SaveChangesAsync();
                 return Ok(model);
             }
             catch (Exception ex)
@@ -79,30 +110,29 @@ namespace WatersTicketingAPI.Controllers
         }
 
         [HttpPut]
-        [Route("")]
+        [Route("{id:int}")]
         [Authorize(Roles = "admin, seller")]
-        public async Task<ActionResult<Ticket>> Put([FromBody] Ticket model, [FromServices]DataContext context)
+        public async Task<ActionResult<TicketDTO>> Put([FromBody] TicketEditDTO model, [FromRoute] int id, [FromServices]DataContext dbContext)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-
             var username = this.ExtractUsernameFromClaim();
-
-            var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
-            var ticket = await context.Tickets.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
-
-            model.UserId = ticket.UserId;
+            var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var ticket = await dbContext.Tickets.FirstOrDefaultAsync(x => x.Id == id);
 
             if (ticket.UserId != user.Id)
             {
                 return BadRequest("You don't own this ticket. You can't modify it");
             }
 
+            ticket.Description = model.Description;
+            ticket.Price = model.Price;
+
             try
             {
-                context.Entry<Ticket>(model).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                dbContext.Entry<Ticket>(ticket).State = EntityState.Modified;
+                await dbContext.SaveChangesAsync();
                 return Ok(model);
             }
             catch (DbUpdateConcurrencyException ex)
@@ -118,16 +148,19 @@ namespace WatersTicketingAPI.Controllers
         [HttpDelete]
         [Route("{id:int}")]
         [Authorize(Roles = "admin, seller")]
-        public async Task<ActionResult<Ticket>> Delete([FromRoute]int id, [FromServices]DataContext context)
+        public async Task<ActionResult<TicketDTO>> Delete([FromRoute]int id, [FromServices]DataContext dbContext)
         {
             
             try
             {
-                var product = await context.Tickets.FirstOrDefaultAsync(x => x.Id == id);
-                if(product == null)
+                var product = await dbContext.Tickets.FirstOrDefaultAsync(x => x.Id == id);
+
+                if(product == null) { 
                     return NotFound(new { message = "Ticket Not Found"});
-                context.Tickets.Remove(product);
-                await context.SaveChangesAsync();
+                }
+
+                dbContext.Tickets.Remove(product);
+                await dbContext.SaveChangesAsync();
                 return Ok(new { message = "Ticket Removed" });
             }
             catch (Exception ex)

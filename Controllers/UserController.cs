@@ -8,179 +8,173 @@ using WatersTicketingAPI.Data;
 using WatersTicketingAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using WatersTicketingAPI.Services;
+using AutoMapper;
+using WatersTicketingAPI.DTO;
 
 namespace WatersTicketingAPI.Controllers
 {
     [Route("user")]
     public class UserController : ControllerBase
     {
-        
+        private readonly IMapper _mapper;
+
+        public UserController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
 
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<dynamic>> Authenticate([FromBody]User model, [FromServices]DataContext context)
+        public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserLoginDTO model, [FromServices] DataContext dbContext)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
-                var user = await context.Users.AsNoTracking().Where( x => x.Username == model.Username && x.Password == model.Password).FirstOrDefaultAsync();
+                var user = await dbContext.Users.AsNoTracking().Where(x => x.Username == model.Username && x.Password == model.Password).FirstOrDefaultAsync();
                 if (user == null)
-                    return NotFound(new { message = "Invalid User or Password..."});
+                    return NotFound(new { message = "Invalid User or Password..." });
+
                 var token = TokenService.GenerateToken(user);
-                //TODO - I should create a DTO in order to not set the password to empty
-                user.Password = "";
-                return new {
-                    user = user,
-                    token = token
-                }; 
+
+                return new
+                {
+                    user = _mapper.Map<UserDTO>(user),
+                    token //Inferred name
+                };
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not authenticate. Error: {ex.Message}"});
+                return BadRequest(new { message = $"Could not authenticate. Error: {ex.Message}" });
             }
         }
 
-        
+
 
         [HttpGet]
         [Route("")]
         [Authorize(Roles = "admin")]
-        [ResponseCache(Location = ResponseCacheLocation.None , Duration = 0, NoStore = true)]
-        public async Task<ActionResult<List<User>>> Get([FromServices]DataContext context)
+        public async Task<ActionResult<List<UserDTO>>> Get([FromServices] DataContext dbContext)
         {
             try
             {
-                var users = await context.Users.AsNoTracking().ToListAsync();
-                if(users == null || users.Count == 0 )
-                    return NotFound(new { message = "users not found."});
-                foreach(var user in users)
-                {
-                    //TODO - I should create a DTO in order to not set the password to empty
-                    user.Password = "";
-                }
-
-                return Ok(users);
+                var users = await dbContext.Users.Select(user => _mapper.Map<UserDTO>(user)).ToListAsync();
+                return (users == null || users.Count == 0) ? NotFound(new { message = "users not found." }) : Ok(users);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not get users. Error: {ex.Message}"});
+                return BadRequest(new { message = $"Could not get users. Error: {ex.Message}" });
             }
         }
 
         [HttpGet]
         [Route("{id:int}")]
         [Authorize(Roles = "admin")]
-        [ResponseCache(Location = ResponseCacheLocation.None , Duration = 0, NoStore = true)]
-        public async Task<ActionResult<User>> GetById([FromRoute] int id, [FromServices] DataContext context)
+        public async Task<ActionResult<UserDTO>> GetById([FromRoute] int id, [FromServices] DataContext dbContext)
         {
             try
             {
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-                if(user == null)
-                    return NotFound(new { message = "user not found."});
-                user.Password = "";
-                return Ok(user);
+                var user = _mapper.Map<UserDTO>(await dbContext.Users.FirstOrDefaultAsync(x => x.Id == id));
+                return (user == null) ? NotFound(new { message = "user not found." }) : Ok(user);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not get user. Error: {ex.Message}"});
-            }   
+                return BadRequest(new { message = $"Could not get user. Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("{username}")]
         [Authorize(Roles = "admin")]
-        [ResponseCache(Location = ResponseCacheLocation.None , Duration = 0, NoStore = true)]
-        public async Task<ActionResult<User>> GetByUsername([FromRoute] string username, [FromServices] DataContext context)
+        public async Task<ActionResult<UserDTO>> GetByUsername([FromRoute] string username, [FromServices] DataContext dbContext)
         {
             try
             {
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
-                if(user == null)
-                    return NotFound(new { message = "user not found."});
-                user.Password = "";
-                return Ok(user);
+                var user = _mapper.Map<UserDTO>(await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username));
+                return (user == null) ? NotFound(new { message = "user not found." }) : Ok(user);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not get user. Error: {ex.Message}"});
-            }   
+                return BadRequest(new { message = $"Could not get user. Error: {ex.Message}" });
+            }
         }
 
         [HttpPost]
         [Route("")]
         [Authorize(Roles = "admin")]
-        [ResponseCache(Location = ResponseCacheLocation.None , Duration = 0, NoStore = true)]
-        public async Task<ActionResult<User>> Post([FromBody]User model, [FromServices]DataContext context)
+        public async Task<ActionResult<UserDTO>> Post([FromBody] UserRegisterDTO model, [FromServices] DataContext dbContext)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if(model.Role == null){
-                model.Role = "visitor";
+
+            if (model.Role == null)
+            {
+                model.Role = "buyer";
             }
-            
+
             try
             {
-
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == model.Username);
-                if(user != null)
-                    return BadRequest(new { message = $"Could not create User with that username"});
-                context.Users.Add(model);
-                await context.SaveChangesAsync();
-                return Ok(new { message = $"User {model.Username} created"});
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Username == model.Username);
+                if (user != null)
+                {
+                    return BadRequest(new { message = $"Could not create User with that username" });
+                }
+                dbContext.Users.Add(_mapper.Map<User>(model));
+                await dbContext.SaveChangesAsync();
+                return Ok(new { message = $"User {model.Username} created" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not create User. Error: {ex.Message}"});
+                return BadRequest(new { message = $"Could not create User. Error: {ex.Message}" });
             }
         }
         [HttpPut]
         [Route("")]
         [Authorize(Roles = "admin")]
-        [ResponseCache(Location = ResponseCacheLocation.None , Duration = 0, NoStore = true)]
-        public async Task<ActionResult<User>> Put([FromBody]User model, [FromServices]DataContext context)
+        public async Task<ActionResult<UserDTO>> Put([FromBody] UserEditDTO model, [FromServices] DataContext dbContext)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == model.Username);
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Username == model.Username);
+
+                if (user == null)
+                    return NotFound(new { message = "user not found" });
+
                 user.Password = model.Password;
-                if(user == null)
-                    return NotFound(new { message = "user not found"});
-                context.Entry<User>(user).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                dbContext.Entry<User>(user).State = EntityState.Modified;
+                await dbContext.SaveChangesAsync();
                 return Ok(model);
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                return BadRequest(new { message = $"Could not Update this User (Concurrency exception). Error: {ex.Message}"});
+                return BadRequest(new { message = $"Could not Update this User (Concurrency exception). Error: {ex.Message}" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not Update this User. Error: {ex.Message}"});
+                return BadRequest(new { message = $"Could not Update this User. Error: {ex.Message}" });
             }
         }
         [HttpDelete]
         [Route("{id:int}")]
         [Authorize(Roles = "admin")]
-        [ResponseCache(Location = ResponseCacheLocation.None , Duration = 0, NoStore = true)]
-        public async Task<ActionResult<User>> Delete([FromRoute] int id, [FromServices]DataContext context)
+        public async Task<ActionResult<UserDTO>> Delete([FromRoute] int id, [FromServices] DataContext dbContext)
         {
             try
             {
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-                if(user == null)
-                    return NotFound(new { message = "user not found"});
-                context.Users.Remove(user);
-                await context.SaveChangesAsync();
-                return Ok(new { message = "user removed"});
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+                if (user == null)
+                    return NotFound(new { message = "user not found" });
+                dbContext.Users.Remove(user);
+                await dbContext.SaveChangesAsync();
+                return Ok(new { message = "user removed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Could not remove this User. Error: {ex.Message}"});
+                return BadRequest(new { message = $"Could not remove this User. Error: {ex.Message}" });
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,6 +52,8 @@ namespace WatersTicketingAPI
             services.AddScoped<DataContext,DataContext>();
 
             services.AddSwaggerGen();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

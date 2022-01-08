@@ -9,6 +9,5 @@ namespace WatersTicketingAPI.DTO
 
         public string Role { get; set; }
 
-        public List<Ticket> Tickets { get; set; }
     }
 }
