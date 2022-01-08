@@ -123,6 +123,7 @@ namespace WatersTicketingAPI.Controllers
             
             try
             {
+
                 var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == model.Username);
                 if(user != null)
                     return BadRequest(new { message = $"Could not create User with that username"});
@@ -145,12 +146,12 @@ namespace WatersTicketingAPI.Controllers
                 return BadRequest(ModelState);
             try
             {
-                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
+                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == model.Username);
+                user.Password = model.Password;
                 if(user == null)
                     return NotFound(new { message = "user not found"});
-                context.Entry<User>(model).State = EntityState.Modified;
+                context.Entry<User>(user).State = EntityState.Modified;
                 await context.SaveChangesAsync();
-                model.Password = "";
                 return Ok(model);
             }
             catch (DbUpdateConcurrencyException ex)
