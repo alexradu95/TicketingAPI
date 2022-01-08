@@ -7,6 +7,8 @@ using WatersTicketingAPI.Data;
 using WatersTicketingAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using System.Security.Claims;
+using WatersTicketingAPI.Utils;
 
 namespace WatersTicketingAPI.Controllers
 {
@@ -61,7 +63,13 @@ namespace WatersTicketingAPI.Controllers
             
             try
             {
-                model.UserId = int.Parse(User.Claims.First(i => i.Type == "UserId").Value);
+
+                var username = this.ExtractUsernameFromClaim();
+
+                var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
+
+                model.UserId = user.Id;
+
                 context.Tickets.Add(model);
                 await context.SaveChangesAsync();
                 return Ok(model);
@@ -74,11 +82,25 @@ namespace WatersTicketingAPI.Controllers
 
         [HttpPut]
         [Route("")]
-        [Authorize(Roles = "admin")]
+
         public async Task<ActionResult<Ticket>> Put([FromBody] Ticket model, [FromServices]DataContext context)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+
+            var username = this.ExtractUsernameFromClaim();
+
+            var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
+            var ticket = await context.Tickets.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
+
+            model.UserId = ticket.UserId;
+
+            if (ticket.UserId != user.Id)
+            {
+                return BadRequest("You don't own this ticket. You can't modify it");
+            }
+
             try
             {
                 context.Entry<Ticket>(model).State = EntityState.Modified;

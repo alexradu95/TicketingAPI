@@ -3,7 +3,9 @@ using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using WatersTicketingAPI.Models;
+
 namespace WatersTicketingAPI.Services
 {
     public static class TokenService
@@ -25,5 +27,6 @@ namespace WatersTicketingAPI.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
     }
 }
