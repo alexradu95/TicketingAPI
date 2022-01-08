@@ -18,7 +18,6 @@ namespace WatersTicketingAPI.Controllers
         [HttpGet]
         [Route("")]
         [AllowAnonymous]
-        [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any,Duration = 30)]
         public async Task<ActionResult<List<Ticket>>> Get([FromServices] DataContext context)
         {
             try
@@ -37,7 +36,6 @@ namespace WatersTicketingAPI.Controllers
         [HttpGet]
         [Route("{id:int}")]
         [AllowAnonymous]
-        [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any,Duration = 30)]
         public async Task<ActionResult<Ticket>> GetById([FromRoute] int id, [FromServices] DataContext context)
         {
             try
@@ -55,7 +53,7 @@ namespace WatersTicketingAPI.Controllers
 
         [HttpPost]
         [Route("")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, seller")]
         public async Task<ActionResult<Ticket>> Post([FromBody]Ticket model, [FromServices]DataContext context)
         {
             if(!ModelState.IsValid)
@@ -82,7 +80,7 @@ namespace WatersTicketingAPI.Controllers
 
         [HttpPut]
         [Route("")]
-
+        [Authorize(Roles = "admin, seller")]
         public async Task<ActionResult<Ticket>> Put([FromBody] Ticket model, [FromServices]DataContext context)
         {
             if(!ModelState.IsValid)
@@ -119,7 +117,7 @@ namespace WatersTicketingAPI.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, seller")]
         public async Task<ActionResult<Ticket>> Delete([FromRoute]int id, [FromServices]DataContext context)
         {
             

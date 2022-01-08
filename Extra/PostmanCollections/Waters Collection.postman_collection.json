@@ -23,12 +23,10 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:44350/user/login",
-							"protocol": "https",
+							"raw": "{{base_url}}/user/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"user",
 								"login"
@@ -43,12 +41,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:44350/user",
-							"protocol": "https",
+							"raw": "{{base_url}}/user",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"user"
 							]
@@ -62,12 +58,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:44350/user/2",
-							"protocol": "https",
+							"raw": "{{base_url}}/user/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"user",
 								"2"
@@ -82,12 +76,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:44350/user/alex",
-							"protocol": "https",
+							"raw": "{{base_url}}/user/alex",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"user",
 								"alex"
@@ -111,12 +103,10 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:44350/user",
-							"protocol": "https",
+							"raw": "{{base_url}}/user",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"user"
 							]
@@ -129,7 +119,15 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
-						"url": null
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
 					},
 					"response": []
 				}
@@ -153,12 +151,10 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:44350/user/login",
-							"protocol": "https",
+							"raw": "{{base_url}}/user/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"user",
 								"login"
@@ -173,15 +169,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:44350/tickets/1",
-							"protocol": "https",
+							"raw": "{{base_url}}/tickets",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
-								"tickets",
-								"1"
+								"tickets"
 							]
 						}
 					},
@@ -222,12 +215,10 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:44350/tickets",
-							"protocol": "https",
+							"raw": "{{base_url}}/tickets",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"tickets"
 							]
@@ -241,12 +232,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:44350/tickets/1",
-							"protocol": "https",
+							"raw": "{{base_url}}/tickets/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "44350",
 							"path": [
 								"tickets",
 								"1"
@@ -263,7 +252,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWxleCIsInJvbGUiOiJtYW5hZ2VyIiwibmJmIjoxNjQxNTU0NDc4LCJleHAiOjE2NDE1NjE2NzgsImlhdCI6MTY0MTU1NDQ3OH0.WvjcQN9hdjrE2gKY66jrc7Q0RFAeM30dVFg_U6sWyks",
+				"value": "{{jwt_token}}",
 				"type": "string"
 			}
 		]
@@ -290,7 +279,13 @@
 	],
 	"variable": [
 		{
-			"value": "",
+			"key": "base_url",
+			"value": "https://localhost:44350/ticketingAPI",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWxleCIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTY0MTYzODQyNywiZXhwIjoxNjQxNjQ1NjI3LCJpYXQiOjE2NDE2Mzg0Mjd9.LmHi57H-NQZjk8V8TxHgzTYG6y_o2cRKcGjGTJgGuEs",
 			"type": "string"
 		}
 	]
