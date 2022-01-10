@@ -8,5 +8,4 @@ public class TicketDto
 
     public decimal Price { get; set; }
 
-    public string CreatedBy { get; set; }
 }

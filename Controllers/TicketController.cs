@@ -85,7 +85,7 @@ public class TicketController : ControllerBase
     [HttpPost]
     [Route("")]
     [Authorize(Roles = "admin, seller")]
-    public async Task<ActionResult<TicketDto>> Post([FromBody] Ticket model, [FromServices] DataContext dbContext)
+    public async Task<ActionResult<TicketDto>> Post([FromBody] TicketDto model, [FromServices] DataContext dbContext)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -98,10 +98,13 @@ public class TicketController : ControllerBase
 
             if (user == null) return BadRequest("You are not authenticated");
 
-            model.UserId = user.Id;
-            dbContext.Tickets.Add(model);
+            Ticket ticketToAdd = mapper.Map<Ticket>(model);
+
+            ticketToAdd.UserId = user.Id;
+
+            dbContext.Tickets.Add(ticketToAdd);
             await dbContext.SaveChangesAsync();
-            return Ok(model);
+            return Ok(mapper.Map<TicketDto>(ticketToAdd));
         }
         catch (Exception ex)
         {
