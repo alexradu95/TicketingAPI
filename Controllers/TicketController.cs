@@ -43,7 +43,7 @@ public class TicketController : ControllerBase
 
     [HttpGet]
     [Route("{id:int}")]
-    [AllowAnonymous]
+    [Authorize(Roles = "admin, seller, buyer")]
     public async Task<ActionResult<TicketDto>> GetById([FromRoute] int id, [FromServices] DataContext dbContext)
     {
         try
