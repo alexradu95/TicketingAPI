@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using WatersTicketingAPI.Services;
 using AutoMapper;
 using WatersTicketingAPI.DTO;
+using WatersTicketingAPI.DTO.User;
 
 namespace WatersTicketingAPI.Controllers
 {
@@ -61,7 +62,7 @@ namespace WatersTicketingAPI.Controllers
             try
             {
                 var users = await dbContext.Users.Select(user => mapper.Map<UserDto>(user)).ToListAsync();
-                return (users == null || users.Count == 0) ? NotFound(new { message = "users not found." }) : Ok(users);
+                return (users.Count == 0) ? NotFound(new { message = "users not found." }) : Ok(users);
             }
             catch (Exception ex)
             {
@@ -117,7 +118,7 @@ namespace WatersTicketingAPI.Controllers
                 User user = await dbContext.Users.FirstOrDefaultAsync(x => x.Username == model.Username);
                 if (user != null)
                 {
-                    return BadRequest(new { message = $"Could not create User with that username" });
+                    return BadRequest(new { message = "Could not create User with that username" });
                 }
                 dbContext.Users.Add(mapper.Map<User>(model));
                 await dbContext.SaveChangesAsync();
@@ -143,7 +144,7 @@ namespace WatersTicketingAPI.Controllers
                     return NotFound(new { message = "user not found" });
 
                 user.Password = model.Password;
-                dbContext.Entry<User>(user).State = EntityState.Modified;
+                dbContext.Entry(user).State = EntityState.Modified;
                 await dbContext.SaveChangesAsync();
                 return Ok(model);
             }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using WatersTicketingAPI.Models;
-
-namespace WatersTicketingAPI.DTO
+﻿namespace WatersTicketingAPI.DTO.User
 {
     public class UserDto
     {

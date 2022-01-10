@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using WatersTicketingAPI.DTO;
+using WatersTicketingAPI.DTO.Ticket;
+using WatersTicketingAPI.DTO.User;
 using WatersTicketingAPI.Models;
 
 namespace WatersTicketingAPI.Mappings

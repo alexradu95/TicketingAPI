@@ -7,10 +7,10 @@ using WatersTicketingAPI.Data;
 using WatersTicketingAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
-using System.Security.Claims;
 using WatersTicketingAPI.Utils;
 using AutoMapper;
 using WatersTicketingAPI.DTO;
+using WatersTicketingAPI.DTO.Ticket;
 
 namespace WatersTicketingAPI.Controllers
 {
@@ -32,7 +32,7 @@ namespace WatersTicketingAPI.Controllers
             try
             {
                 var tickets = await dbContext.Tickets.ToListAsync();
-                return (tickets == null || tickets.Count == 0) ? NotFound(new { message = "Tickets not found." }) : Ok(mapper.Map<List<TicketDto>>(tickets));
+                return (tickets.Count == 0) ? NotFound(new { message = "Tickets not found." }) : Ok(mapper.Map<List<TicketDto>>(tickets));
             }
             catch (Exception ex)
             {
@@ -66,14 +66,14 @@ namespace WatersTicketingAPI.Controllers
             {
                 string username = this.ExtractUsernameFromClaim();
 
-                if(String.IsNullOrEmpty(username))
+                if(string.IsNullOrEmpty(username))
                 {
-                    return BadRequest(new { message = $"Invalid Session. Please authenticate" });
+                    return BadRequest(new { message = "Invalid Session. Please authenticate" });
                 }
 
                 List<Ticket> tickets = await dbContext.Tickets.Where(x => x.CreatedBy.Username == username).ToListAsync();
 
-                return (tickets == null ? NotFound(new { message = "Tickets not found." }) : Ok(tickets));
+                return (!tickets.Any() ? NotFound(new { message = "Tickets not found." }) : Ok(tickets));
 
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace WatersTicketingAPI.Controllers
             User user = await dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
             Ticket ticket = await dbContext.Tickets.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (ticket.UserId != user.Id)
+            if (user != null && ticket != null && ticket.UserId != user.Id)
             {
                 return BadRequest("You don't own this ticket. You can't modify it");
             }
@@ -131,7 +131,7 @@ namespace WatersTicketingAPI.Controllers
 
             try
             {
-                dbContext.Entry<Ticket>(ticket).State = EntityState.Modified;
+                dbContext.Entry(ticket).State = EntityState.Modified;
                 await dbContext.SaveChangesAsync();
                 return Ok(model);
             }

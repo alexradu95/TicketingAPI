@@ -1,4 +1,4 @@
-﻿namespace WatersTicketingAPI.DTO
+﻿namespace WatersTicketingAPI.DTO.User
 {
     public class UserEditDto
     {
