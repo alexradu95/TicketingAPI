@@ -1,6 +1,6 @@
 ﻿namespace WatersTicketingAPI.DTO
 {
-    public class UserRegisterDTO
+    public class UserRegisterDto
     {
         public string Username { get; set; }
         public string Password { get; set; }

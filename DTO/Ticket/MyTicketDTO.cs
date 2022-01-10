@@ -1,7 +1,7 @@
 ﻿namespace WatersTicketingAPI.DTO
 {
-    public class MyTicketDTO : TicketDTO
+    public class MyTicketDto : TicketDto
     {
-        int Id;
+        int id;
     }
 }

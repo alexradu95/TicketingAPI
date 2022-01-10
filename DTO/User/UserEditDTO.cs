@@ -1,6 +1,6 @@
 ﻿namespace WatersTicketingAPI.DTO
 {
-    public class UserEditDTO
+    public class UserEditDto
     {
         public string Username { get; set; }
 

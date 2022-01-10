@@ -3,7 +3,7 @@ using WatersTicketingAPI.Models;
 
 namespace WatersTicketingAPI.DTO
 {
-    public class UserDTO
+    public class UserDto
     {
         public string Username { get; set; }
 

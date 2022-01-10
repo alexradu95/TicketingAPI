@@ -21,7 +21,7 @@ namespace WatersTicketingAPI
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -29,7 +29,7 @@ namespace WatersTicketingAPI
             services.AddCors();
             services.AddControllers();
             
-            var key = Encoding.ASCII.GetBytes(Settings.Secret);
+            byte[] key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddAuthentication( x =>
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

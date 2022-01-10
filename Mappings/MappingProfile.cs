@@ -8,18 +8,18 @@ namespace WatersTicketingAPI.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<User, UserDTO>();
-            CreateMap<User, UserEditDTO>();
-            CreateMap<User, UserLoginDTO>();
-            CreateMap<User, UserRegisterDTO>();
-            CreateMap<Ticket, MyTicketDTO>();
-            CreateMap<TicketEditDTO, Ticket>();
-            CreateMap<UserDTO, User>();
-            CreateMap<UserEditDTO, User>();
-            CreateMap<UserLoginDTO, User>();
-            CreateMap<UserRegisterDTO, User>();
-            CreateMap<TicketDTO, Ticket>();
-            CreateMap<Ticket, TicketDTO>();
+            CreateMap<User, UserDto>();
+            CreateMap<User, UserEditDto>();
+            CreateMap<User, UserLoginDto>();
+            CreateMap<User, UserRegisterDto>();
+            CreateMap<Ticket, MyTicketDto>();
+            CreateMap<TicketEditDto, Ticket>();
+            CreateMap<UserDto, User>();
+            CreateMap<UserEditDto, User>();
+            CreateMap<UserLoginDto, User>();
+            CreateMap<UserRegisterDto, User>();
+            CreateMap<TicketDto, Ticket>();
+            CreateMap<Ticket, TicketDto>();
         }
     }
 }
