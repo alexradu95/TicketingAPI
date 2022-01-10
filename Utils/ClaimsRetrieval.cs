@@ -12,6 +12,6 @@ public static class ClaimsRetrieval
         //First get user claims    
         var claims = controller.User.Claims.ToList();
         //Filter specific claim    
-        return claims?.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))?.Value;
+        return claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))?.Value;
     }
 }
