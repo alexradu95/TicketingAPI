@@ -129,8 +129,9 @@ public class TicketController : ControllerBase
         if (ticket == null) return BadRequest("The ticket with id: {{id}} does not exist.");
         if (ticket.UserId != user.Id) return BadRequest("You don't own this ticket. You can't modify it");
 
-        ticket.Description = model.Description;
-        ticket.Price = model.Price;
+        if(!string.IsNullOrEmpty(model.Description)) ticket.Description = model.Description;
+        if (model.Price != 0) ticket.Price = model.Price;
+            
 
         try
         {
