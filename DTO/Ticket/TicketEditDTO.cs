@@ -1,10 +1,8 @@
-﻿namespace WatersTicketingAPI.DTO.Ticket
+﻿namespace WatersTicketingAPI.DTO.Ticket;
+
+public class TicketEditDto
 {
-    public class TicketEditDto
-    {
-        public string Description { get; set; }
+    public string Description { get; set; }
 
-        public decimal Price { get; set; }
-
-    }
+    public decimal Price { get; set; }
 }

@@ -1,7 +1,6 @@
-﻿namespace WatersTicketingAPI.DTO.Ticket
+﻿namespace WatersTicketingAPI.DTO.Ticket;
+
+public class MyTicketDto : TicketDto
 {
-    public class MyTicketDto : TicketDto
-    {
-        int id;
-    }
+    private int id;
 }
